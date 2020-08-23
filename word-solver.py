@@ -45,6 +45,8 @@ else:
         count += 1
 
 length = int(input("Enter your word length: "))
+
+
 print("ROWS: " + str(data))
 print("WORD LENGTH: " + str(length))
 

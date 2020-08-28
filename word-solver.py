@@ -8,18 +8,19 @@ foundWords = list()
 
 def searchFromLocation(currentWord, letterIndex, rowIndex, columnIndex, length, matrix, dictionary):
     upperBound = len(matrix[0]) - 1
-    # rowIndex is out of bounds - wrap
+    
+    # rowIndex is out of bounds - end
     if rowIndex == -1:
-        rowIndex = upperBound
+        return
     elif rowIndex > upperBound:
-        rowIndex = 0
-    # columnIndex is out of bounds - wrap
+        return
+    # columnIndex is out of bounds - end
     if columnIndex == -1:
-        columnIndex = upperBound
+        return
     elif columnIndex > upperBound:
-        columnIndex = 0
+        return
     # Location has been visited - end
-    elif matrix[rowIndex][columnIndex] is '0':
+    if matrix[rowIndex][columnIndex] is '0' or matrix[rowIndex][columnIndex] is '-':
         return
     # Filter dictionary by letterIndex value
     filteredDictionary = list(filter(lambda x: x[letterIndex] == matrix[rowIndex][columnIndex], dictionary))
@@ -32,7 +33,6 @@ def searchFromLocation(currentWord, letterIndex, rowIndex, columnIndex, length, 
     if letterIndex == length - 1:
         # If word is in dictionary, add to found words.
         if currentWord in filteredDictionary:
-            # print(currentWord)
             foundWords.append(currentWord)
         return        
     else:
@@ -45,8 +45,6 @@ def searchFromLocation(currentWord, letterIndex, rowIndex, columnIndex, length, 
         searchFromLocation(currentWord, letterIndex + 1, rowIndex + 1, columnIndex + 1, length, copiedMatrix, filteredDictionary)
         searchFromLocation(currentWord, letterIndex + 1, rowIndex + 1, columnIndex, length, copiedMatrix, filteredDictionary)
         searchFromLocation(currentWord, letterIndex + 1, rowIndex + 1, columnIndex - 1, length, copiedMatrix, filteredDictionary)
-
-
 
 def searchMatrix(dictionary, matrix, length):
     size = len(matrix)
@@ -65,15 +63,20 @@ if len(sys.argv) > 1:
         "This script finds words of the supplied length in the letter matrix.")
         print ("This script may be used in two ways:\n")
         print ("1) Run the program without any arguments: \n"
-        "Type each row of letters followed by a return. " 
+        "Type each row of letters followed by a return. Empty spaces should be filled with a '-'." 
         "When you've entered each row, enter an empty line.\n"
         "You will then be prompted for the length of the word; enter this, and press return.\n")
         print ("2) Run the program with a text file as an argument: \n"
-        "This text file MUST contain an (N x N) matrix of letters, "
+        "This text file MUST contain an (N x N) matrix of letters or dashes, "
         "Where N is equal to both the number of letters in each row and the number of rows."
         "\nFor example:\n\n"
         "     abcd\n"
         "     efgh\n"
+        "     ijkl\n"
+        "     mnop\n\n"
+        "Or: \n\n"
+        "     --cd\n"
+        "     --gh\n"
         "     ijkl\n"
         "     mnop\n\n"
         "You will then be prompted for the length of the word; enter this, and press return.")
@@ -90,7 +93,7 @@ if len(sys.argv) > 1:
 # No arguments...
 else:
     print ('\nWelcome to word solver! Please read all instructions before continuing.\n')
-    print ("Type each row of letters followed by a return. "
+    print ("Type each row of letters followed by a return. Empty spaces should be filled with a '-'. "
     "When you\'re done, enter an empty line.")
     count = 0
     data = list()
@@ -105,7 +108,6 @@ else:
 # Format data to all upper case
 data = list(map(str.upper, data))
 data = list(map(lambda x: list(x), data))
-
 # Get length of word to search for (steps to take)
 length = int(input("Enter your word length: "))
 
@@ -118,7 +120,6 @@ except:
 # Create list from dictionary file
 dictionary = list(map(str.strip, dictionaryFile.readlines()))
 dictionary = list(map(str.upper, dictionary))
-# dictionary = list(map(lambda x: list(x), dictionary))
 dictionaryFile.close()
 
 # Shorten dictionary to only words of expected length
